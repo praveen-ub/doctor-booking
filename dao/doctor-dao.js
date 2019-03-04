@@ -3,8 +3,11 @@ var nextDoctorId = 1;
 
 var doctorList = [];
 
+var daysOfWeek = ['sunday','monday','tuesday','wednesday','thursday','friday','saturday'];
 
-
+var bookedByDoctor ={
+  // doctorid vs bookings by date
+};
 // var doctor = require('../model/doctor.js');
 
 var doctorDao = {
@@ -32,6 +35,21 @@ var doctorDao = {
       this.getDoctor(id, function(doctor){
         callback(doctor.workingHours);
       });
+  },
+  getBookingByDate:function(id, dateStr, callback){
+    console.log("Whole booking data::"+JSON.stringify(bookedByDoctor));
+    console.log("Getting booked slots for::"+id+"::"+dateStr);
+    var date = new Date(dateStr);
+    var dateString = date.getDate();
+    var monthString = date.getMonth()+1;
+    var yearString = date.getFullYear();
+    var fullDateString = dateString+"-"+monthString+"-"+yearString;
+     var slots;
+     var bookingByDate = bookedByDoctor[id];
+     if(bookingByDate && bookingByDate[fullDateString]){
+       slots = bookingByDate[fullDateString];
+     }
+     callback(slots);
   },
   addDoctor: function(request, callback){
 
@@ -63,9 +81,11 @@ var doctorDao = {
 
           var currentWorkingHours = doctor.workingHours;
           var workingHoursToUpdate = request.workingHours;
-          if(workingHoursToUpdate.sunday){
-
-          }
+          daysOfWeek.forEach(function(day){
+              if(workingHoursToUpdate[day]){
+                currentWorkingHours[day] = workingHoursToUpdate[day];
+              }
+          });
        }
        callback(doctor);
      });
@@ -76,6 +96,37 @@ var doctorDao = {
      // console.log("List after adding");
      // console.log(doctorList);
      // nextDoctorId = nextDoctorId+1;
+  },
+  updateBookedHours:function(id, date, slot){
+      var dateString = date.getDate();
+      var monthString = date.getMonth()+1;
+      var yearString = date.getFullYear();
+      var fullDateString = dateString+"-"+monthString+"-"+yearString;
+      console.log("Full date string::"+fullDateString);
+      console.log("Doctor Dao updateBookedHours::"+id+"::"+date+"::"+slot);
+      console.log("Whole booking data::"+JSON.stringify(bookedByDoctor));
+      var bookingByDate = bookedByDoctor[id];
+      if(bookingByDate){
+            console.log("Bookings exists for doctor"+"::"+JSON.stringify(bookingByDate));
+            var bookingSlots = bookingByDate[fullDateString];
+            if(bookingSlots){
+              bookingSlots.push(slot);
+            }
+            else{
+              bookingSlots = [];
+              bookingSlots.push(slot);
+              bookingByDate[fullDateString] = bookingSlots;
+            }
+      }
+      else{
+          console.log("Bookings does not exists for doctor");
+          var bookingSlots = [];
+          bookingSlots.push(slot);
+          bookingByDate = {};
+          bookingByDate[fullDateString] = bookingSlots;
+          console.log("Whole booking data::"+JSON.stringify(bookedByDoctor));
+      }
+      bookedByDoctor[id] = bookingByDate;
   }
 }
 module.exports = doctorDao;

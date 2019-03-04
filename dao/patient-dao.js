@@ -11,6 +11,19 @@ var patientDao = {
       return callback(patientList);
 
   },
+  getPatient: function(id, callback){
+
+      var patient;
+      patientList.forEach(function(pat){
+          if(id == pat.id){
+             patient = pat;
+          }
+      });
+      console.log("Going to return patient::"+patient.firstName);
+      if(callback){
+          callback(patient);
+      }
+  },
   addPatient: function(request, callback){
 
      var patient  = {};

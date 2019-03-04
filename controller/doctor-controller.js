@@ -20,9 +20,20 @@ routes.get("/:id", (req,res) =>{
 
 routes.get("/:id/working-hours", (req,res) =>{
 
+
     console.log("Get doctor workingHours");
     doctorService.getWorkingHours(req.params.id,function(hours){
       res.send(hours);
+    })
+});
+
+routes.get("/:id/availability", (req,res) =>{
+
+    console.log("Date string is::"+req.query.date);
+    console.log("Get doctor workingHours");
+    var dateString = req.query.date;
+    doctorService.getAvailableHours(req.params.id, dateString, function(availableHours){
+      res.send(availableHours);
     })
 });
 
