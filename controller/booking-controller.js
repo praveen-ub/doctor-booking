@@ -7,6 +7,9 @@ var bookingService = require("../service/booking-service.js");
 
 routes.post("/", (req,res) =>{
     bookingService.book(req.body, function(response){
+        if(response["status"] == "failure"){
+          res.status(400);
+        }
         res.send(response);
     });
 });
