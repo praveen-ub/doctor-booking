@@ -8,14 +8,20 @@ var daysOfWeek = ['sunday','monday','tuesday','wednesday','thursday','friday','s
 var bookedByDoctor ={
   // doctorid vs bookings by date
 };
-// var doctor = require('../model/doctor.js');
 
 var doctorDao = {
 
+  //Doctor model
+  Doctor: function(firstName, lastName, workingHours){
+    this.firstName = firstName;
+    this.lastName = lastName;
+    this.workingHours = workingHours;
+    this.id = nextDoctorId;
+    nextDoctorId = nextDoctorId+1;
+  },
   getList: function(callback){
 
-      return callback(doctorList);
-
+      callback(doctorList);
   },
   getDoctor: function(id, callback){
 
@@ -53,16 +59,10 @@ var doctorDao = {
   },
   addDoctor: function(request, callback){
 
-     // var newDoctor = doctor.create(nextDoctorId, request.firstName, request.lastName);
-     var doctor  = {};
-     doctor['firstName'] = request.firstName;
-     doctor['lastName'] = request.lastName;
-     doctor['id'] = nextDoctorId;
-     doctor['workingHours'] = request.workingHours;
+     var doctor = new this.Doctor(request.firstName, request.lastName, request.workingHours);
      doctorList.push(doctor);
      console.log("List after adding");
      console.log(doctorList);
-     nextDoctorId = nextDoctorId+1;
      callback(doctor);
   },
   updateDoctor: function(id, request, callback){
@@ -89,13 +89,6 @@ var doctorDao = {
        }
        callback(doctor);
      });
-     //
-     // doctor['id'] = nextDoctorId;
-     // doctor['workingHours'] = request.workingHours;
-     // doctorList.push(doctor);
-     // console.log("List after adding");
-     // console.log(doctorList);
-     // nextDoctorId = nextDoctorId+1;
   },
   updateBookedHours:function(id, date, slot){
       var dateString = date.getDate();

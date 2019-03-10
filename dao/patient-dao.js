@@ -6,10 +6,16 @@ var patientList = [];
 
 var patientDao = {
 
+  //Patient model
+  Patient: function(firstName, lastName){
+    this.firstName = firstName;
+    this.lastName = lastName;
+    this.id = nextPatientId;
+    nextPatientId = nextPatientId+1;
+  },
   getList: function(callback){
 
       return callback(patientList);
-
   },
   getPatient: function(id, callback){
 
@@ -26,14 +32,11 @@ var patientDao = {
   },
   addPatient: function(request, callback){
 
-     var patient  = {};
-     patient['firstName'] = request.firstName;
-     patient['lastName'] = request.lastName;
-     patient['id'] = nextPatientId;
+     var patient = new this.Patient(request.firstName, request.lastName);
      patientList.push(patient);
      console.log("List after adding");
      console.log(patientList);
-     nextPatientId = nextPatientId+1;
+
      callback(patient);
   }
 }
