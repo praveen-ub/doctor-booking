@@ -59,7 +59,10 @@ var doctorService = {
             var hours = workingHours[day];
             console.log("working hours is::"+hours);
             var workingSlots = [];
-            var response = {};
+            var response = {
+              "slotduration":"1 hr",
+              "slots":[]
+            };
             if(hours){
               doctorDao.getBookingByDate(id, dateString, function(bookedSlots){
                 console.log("Booked slots::"+bookedSlots);
@@ -80,13 +83,10 @@ var doctorService = {
                         workingSlots.push(slotDetail);
                     }
                 });
-                response = {
-                  "slotduration":"1 hr",
-                  "slots":workingSlots
-                }
-                callback(response);
+                response.slots = workingSlots;
               });
             }
+            callback(response);
         });
     },
     addDoctor: function(request, callback){
